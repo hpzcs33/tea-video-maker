@@ -1,15 +1,21 @@
 // 全局状态
 let state = {
     template: 1,
+    templateName: '经典展示',
+    templateStyle: 'classic',
     images: [],
     shopName: '',
-    slogan: ''
+    slogan: '',
+    textColor: '#ffffff',
+    blurLevel: 5,
+    fontSize: 20
 };
 
 // DOM 加载完成后执行
 document.addEventListener('DOMContentLoaded', () => {
     initTemplateSelection();
     initUpload();
+    initCustomize();
 });
 
 // 初始化模板选择
@@ -20,9 +26,66 @@ function initTemplateSelection() {
             cards.forEach(c => c.classList.remove('selected'));
             card.classList.add('selected');
             state.template = parseInt(card.dataset.template);
-            updatePreview();
+            state.templateName = card.dataset.name;
+            state.templateStyle = card.dataset.style;
+            updateTemplatePreview();
         });
     });
+}
+
+// 初始化自定义选项
+function initCustomize() {
+    const textColorInput = document.getElementById('textColor');
+    const blurInput = document.getElementById('blurLevel');
+    const fontSizeInput = document.getElementById('fontSize');
+    
+    textColorInput.addEventListener('input', (e) => {
+        state.textColor = e.target.value;
+        updateLivePreview();
+    });
+    
+    blurInput.addEventListener('input', (e) => {
+        state.blurLevel = parseInt(e.target.value);
+        document.getElementById('blurValue').textContent = e.target.value;
+        updateLivePreview();
+    });
+    
+    fontSizeInput.addEventListener('input', (e) => {
+        state.fontSize = parseInt(e.target.value);
+        document.getElementById('fontSizeValue').textContent = e.target.value;
+        updateLivePreview();
+    });
+}
+
+// 更新模板预览
+function updateTemplatePreview() {
+    // 为不同模板设置不同的背景
+    const preview = document.querySelector(`.template-card[data-template="${state.template}"] .preview-box`);
+    if (preview) {
+        // 重置样式
+        preview.style.background = '';
+        
+        switch(state.templateStyle) {
+            case 'classic':
+                preview.style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
+                break;
+            case 'product':
+                preview.style.background = 'linear-gradient(135deg, #ff9a9e, #fecfef)';
+                break;
+            case 'sale':
+                preview.style.background = 'linear-gradient(135deg, #ff6b6b, #ffa500)';
+                break;
+            case 'elegant':
+                preview.style.background = 'linear-gradient(135deg, #a8edea, #fed6e3)';
+                break;
+            case 'trendy':
+                preview.style.background = 'linear-gradient(135deg, #f093fb, #f5576c)';
+                break;
+            case 'discount':
+                preview.style.background = 'linear-gradient(135deg, #434343, #000000)';
+                break;
+        }
+    }
 }
 
 // 初始化上传功能
@@ -57,80 +120,70 @@ function initUpload() {
 
 // 处理上传的文件
 function handleFiles(files) {
-    const preview = document.getElementById('videoPreview');
-    preview.innerHTML = '<p style="color:#666;">图片加载中...</p>';
-    
     state.images = [];
-    let loadedCount = 0;
     
-    Array.from(files).slice(0, 5).forEach((file, index) => {
+    Array.from(files).slice(0, 5).forEach((file) => {
         if (file.type.startsWith('image/')) {
             const reader = new FileReader();
             reader.onload = (e) => {
                 state.images.push(e.target.result);
-                loadedCount++;
-                
-                if (loadedCount === Math.min(files.length, 5)) {
-                    renderPreview();
-                }
+                updateLivePreview();
             };
             reader.readAsDataURL(file);
         }
     });
-    
-    if (state.images.length === 0 && files.length > 0) {
-        preview.innerHTML = '<p style="color:#f56c6c;">请上传图片文件（jpg、png、gif等）</p>';
-    }
 }
 
-// 渲染预览效果
-function renderPreview() {
-    const preview = document.getElementById('videoPreview');
-    preview.innerHTML = '';
+// 更新实时预览
+function updateLivePreview() {
+    const liveBg = document.querySelector('.live-bg');
+    const liveTitle = document.getElementById('liveTitle');
+    const liveSlogan = document.getElementById('liveSlogan');
+    const liveImages = document.getElementById('liveImages');
     
-    if (state.images.length === 0) {
-        preview.innerHTML = '<p>请先上传图片</p>';
-        return;
+    // 更新背景样式
+    liveBg.style.filter = `blur(${state.blurLevel}px)`;
+    
+    // 根据模板设置背景
+    switch(state.templateStyle) {
+        case 'classic':
+            liveBg.style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
+            break;
+        case 'product':
+            liveBg.style.background = 'linear-gradient(135deg, #ff9a9e, #fecfef)';
+            break;
+        case 'sale':
+            liveBg.style.background = 'linear-gradient(135deg, #ff6b6b, #ffa500)';
+            break;
+        case 'elegant':
+            liveBg.style.background = 'linear-gradient(135deg, #a8edea, #fed6e3)';
+            break;
+        case 'trendy':
+            liveBg.style.background = 'linear-gradient(135deg, #f093fb, #f5576c)';
+            break;
+        case 'discount':
+            liveBg.style.background = 'linear-gradient(135deg, #434343, #000000)';
+            break;
+        default:
+            liveBg.style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
     }
     
-    // 创建图片展示
-    const imgContainer = document.createElement('div');
-    imgContainer.style.cssText = 'display:flex;gap:10px;flex-wrap:wrap;justify-content:center;';
+    // 更新文字
+    state.shopName = document.getElementById('shopName')?.value || '';
+    state.slogan = document.getElementById('slogan')?.value || '';
     
-    state.images.forEach((imgData, index) => {
-        const imgWrapper = document.createElement('div');
-        imgWrapper.style.cssText = 'position:relative;';
-        
-        const img = document.createElement('img');
-        img.src = imgData;
-        img.style.cssText = 'width:80px;height:80px;object-fit:cover;border-radius:8px;border:2px solid #ddd;';
-        
-        imgWrapper.appendChild(img);
-        imgContainer.appendChild(imgWrapper);
-    });
+    liveTitle.textContent = state.shopName || '店铺名称';
+    liveTitle.style.color = state.textColor;
+    liveTitle.style.fontSize = `${state.fontSize}px`;
     
-    preview.appendChild(imgContainer);
+    liveSlogan.textContent = state.slogan || '品牌口号';
+    liveSlogan.style.color = state.textColor;
+    liveSlogan.style.fontSize = `${state.fontSize * 0.6}px`;
     
-    // 显示文字信息
-    if (state.shopName || state.slogan) {
-        const textDiv = document.createElement('div');
-        textDiv.style.cssText = 'margin-top:15px;text-align:center;';
-        textDiv.innerHTML = `
-            <div style="font-size:1.2rem;font-weight:bold;color:#333;">${state.shopName || '店铺名称'}</div>
-            <div style="font-size:0.9rem;color:#666;margin-top:5px;">${state.slogan || '品牌口号'}</div>
-        `;
-        preview.appendChild(textDiv);
-    }
-}
-
-// 更新预览
-function updatePreview() {
-    state.shopName = document.getElementById('shopName').value;
-    state.slogan = document.getElementById('slogan').value;
-    
-    if (state.images.length > 0) {
-        renderPreview();
-    }
+    // 更新图片预览
+    liveImages.innerHTML = state.images.map(img => 
+        `<img src="${img}" alt="预览图片">`
+    ).join('');
 }
 
 // 跳转到指定步骤
@@ -138,15 +191,64 @@ function goToStep(step) {
     document.querySelectorAll('.step').forEach(s => s.classList.add('hidden'));
     document.getElementById('step' + step).classList.remove('hidden');
     
-    if (step === 2 && state.images.length > 0) {
-        renderPreview();
+    if (step === 2) {
+        updateLivePreview();
     }
+    
+    if (step === 3) {
+        updateFinalPreview();
+    }
+}
+
+// 更新最终预览
+function updateFinalPreview() {
+    const finalBg = document.querySelector('#videoResult .live-bg');
+    const finalTitle = document.getElementById('finalTitle');
+    const finalSlogan = document.getElementById('finalSlogan');
+    const finalImages = document.getElementById('finalImages');
+    
+    // 应用模板样式
+    switch(state.templateStyle) {
+        case 'classic':
+            finalBg.style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
+            break;
+        case 'product':
+            finalBg.style.background = 'linear-gradient(135deg, #ff9a9e, #fecfef)';
+            break;
+        case 'sale':
+            finalBg.style.background = 'linear-gradient(135deg, #ff6b6b, #ffa500)';
+            break;
+        case 'elegant':
+            finalBg.style.background = 'linear-gradient(135deg, #a8edea, #fed6e3)';
+            break;
+        case 'trendy':
+            finalBg.style.background = 'linear-gradient(135deg, #f093fb, #f5576c)';
+            break;
+        case 'discount':
+            finalBg.style.background = 'linear-gradient(135deg, #434343, #000000)';
+            break;
+    }
+    
+    finalBg.style.filter = `blur(${state.blurLevel}px)`;
+    finalTitle.textContent = state.shopName || '店铺名称';
+    finalTitle.style.color = state.textColor;
+    finalTitle.style.fontSize = `${state.fontSize}px`;
+    finalSlogan.textContent = state.slogan || '品牌口号';
+    finalSlogan.style.color = state.textColor;
+    finalSlogan.style.fontSize = `${state.fontSize * 0.6}px`;
+    
+    finalImages.innerHTML = state.images.map(img => 
+        `<img src="${img}" alt="预览图片">`
+    ).join('');
+    
+    // 更新汇总信息
+    document.getElementById('summaryTemplate').textContent = state.templateName;
+    document.getElementById('summaryImages').textContent = state.images.length;
 }
 
 // 生成视频
 function generateVideo() {
     const btn = document.getElementById('generateBtn');
-    const result = document.getElementById('videoResult');
     
     if (state.images.length === 0) {
         alert('请先上传至少一张图片！');
@@ -156,23 +258,18 @@ function generateVideo() {
     
     btn.textContent = '生成中...';
     btn.disabled = true;
-    result.innerHTML = '<p style="color:#666;">正在生成视频，请稍候...</p>';
     
-    // 模拟视频生成过程
+    // 模拟视频生成
     setTimeout(() => {
-        result.innerHTML = `
-            <div style="text-align:center;padding:20px;">
-                <div style="font-size:4rem;">🎉</div>
-                <p style="font-size:1.2rem;color:#333;margin-top:15px;">视频生成成功！</p>
-                <p style="color:#666;margin-top:10px;">
-                    模板：${['经典展示', '产品特写', '活动宣传'][state.template - 1]}<br>
-                    店铺：${state.shopName || '未填写'}<br>
-                    图片：${state.images.length} 张
-                </p>
-                <button class="btn-primary" style="margin-top:20px;" onclick="alert('下载功能即将上线！')">下载视频</button>
-            </div>
-        `;
-        btn.textContent = '生成视频';
-        btn.disabled = false;
+        btn.textContent = '生成完成！';
+        btn.style.background = '#52c41a';
+        
+        setTimeout(() => {
+            alert('🎉 视频生成成功！\n\n当前为演示版本，完整视频生成功能正在开发中。\n\n你可以：\n1. 截图保存预览效果\n2. 等待后续功能上线');
+            
+            btn.textContent = '生成视频';
+            btn.disabled = false;
+            btn.style.background = '';
+        }, 500);
     }, 3000);
 }
