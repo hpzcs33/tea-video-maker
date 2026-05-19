@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>茶饮店视频制作工具</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🍵 茶饮品牌视频制作工具</h1>
+            <p>三步生成你的品牌宣传视频</p>
+        </header>
+
+        <!-- 步骤1：选择模板 -->
+        <section class="step" id="step1">
+            <h2>第一步：选择视频模板</h2>
+            <div class="template-grid">
+                <div class="template-card selected" data-template="1">
+                    <div class="preview-box">模板 1</div>
+                    <p>经典展示</p>
+                </div>
+                <div class="template-card" data-template="2">
+                    <div class="preview-box">模板 2</div>
+                    <p>产品特写</p>
+                </div>
+                <div class="template-card" data-template="3">
+                    <div class="preview-box">模板 3</div>
+                    <p>活动宣传</p>
+                </div>
+            </div>
+            <button class="btn-primary" onclick="goToStep(2)">下一步</button>
+        </section>
+
+        <!-- 步骤2：上传图片和内容 -->
+        <section class="step hidden" id="step2">
+            <h2>第二步：上传图片和内容</h2>
+            
+            <div class="upload-area" id="uploadArea">
+                <p>点击或拖拽图片到这里</p>
+                <input type="file" id="fileInput" accept="image/*" multiple style="display:none">
+            </div>
+
+            <div class="preview-container">
+                <div class="video-preview" id="videoPreview">
+                    <p>视频预览区域</p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>店铺名称：</label>
+                <input type="text" id="shopName" placeholder="例如：老王茶铺" oninput="updatePreview()">
+            </div>
+
+            <div class="form-group">
+                <label>品牌口号：</label>
+                <input type="text" id="slogan" placeholder="例如：好茶，好心情" oninput="updatePreview()">
+            </div>
+
+            <div class="btn-group">
+                <button class="btn-secondary" onclick="goToStep(1)">上一步</button>
+                <button class="btn-primary" onclick="goToStep(3)">下一步</button>
+            </div>
+        </section>
+
+        <!-- 步骤3：生成视频 -->
+        <section class="step hidden" id="step3">
+            <h2>第三步：生成并下载视频</h2>
+            
+            <div class="video-result" id="videoResult">
+                <p>点击下方按钮生成视频</p>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn-secondary" onclick="goToStep(2)">上一步</button>
+                <button class="btn-primary" id="generateBtn" onclick="generateVideo()">生成视频</button>
+            </div>
+        </section>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
