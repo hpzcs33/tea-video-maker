@@ -17,19 +17,76 @@
         <section class="step" id="step1">
             <h2>第一步：选择视频模板</h2>
             <div class="template-grid">
-                <div class="template-card selected" data-template="1">
-                    <div class="preview-box">模板 1</div>
-                    <p>经典展示</p>
+                <div class="template-card selected" data-template="1" data-name="经典展示" data-style="classic">
+                    <div class="preview-box template-preview" id="template-preview-1">
+                        <div class="preview-text">店铺名称</div>
+                        <div class="preview-subtext">品牌口号</div>
+                    </div>
+                    <p>🍵 经典展示</p>
+                    <span class="template-desc">适合所有店铺</span>
                 </div>
-                <div class="template-card" data-template="2">
-                    <div class="preview-box">模板 2</div>
-                    <p>产品特写</p>
+                <div class="template-card" data-template="2" data-name="奶茶特写" data-style="product">
+                    <div class="preview-box template-preview" id="template-preview-2">
+                        <div class="preview-product">🧋</div>
+                        <div class="preview-text">产品特写</div>
+                    </div>
+                    <p>🧋 奶茶特写</p>
+                    <span class="template-desc">适合产品展示</span>
                 </div>
-                <div class="template-card" data-template="3">
-                    <div class="preview-box">模板 3</div>
-                    <p>活动宣传</p>
+                <div class="template-card" data-template="3" data-name="活动促销" data-style="sale">
+                    <div class="preview-box template-preview" id="template-preview-3">
+                        <div class="preview-badge">🔥</div>
+                        <div class="preview-text">限时优惠</div>
+                    </div>
+                    <p>🎉 活动促销</p>
+                    <span class="template-desc">适合节日优惠</span>
+                </div>
+                <div class="template-card" data-template="4" data-name="清雅风格" data-style="elegant">
+                    <div class="preview-box template-preview" id="template-preview-4">
+                        <div class="preview-text elegant-text">茶·韵</div>
+                    </div>
+                    <p>🌿 清雅风格</p>
+                    <span class="template-desc">适合文艺小店</span>
+                </div>
+                <div class="template-card" data-template="5" data-name="热闹风格" data-style="trendy">
+                    <div class="preview-box template-preview" id="template-preview-5">
+                        <div class="preview-party">✨</div>
+                        <div class="preview-text">网红打卡</div>
+                    </div>
+                    <p>🔥 热闹风格</p>
+                    <span class="template-desc">适合网红店</span>
+                </div>
+                <div class="template-card" data-template="6" data-name="促销专场" data-style="discount">
+                    <div class="preview-box template-preview" id="template-preview-6">
+                        <div class="preview-discount">¥</div>
+                        <div class="preview-text">超值特价</div>
+                    </div>
+                    <p>💰 促销专场</p>
+                    <span class="template-desc">适合打折活动</span>
                 </div>
             </div>
+            
+            <!-- 自定义选项 -->
+            <div class="customize-section">
+                <h3>自定义效果</h3>
+                <div class="customize-grid">
+                    <div class="customize-item">
+                        <label>文字颜色</label>
+                        <input type="color" id="textColor" value="#ffffff">
+                    </div>
+                    <div class="customize-item">
+                        <label>背景模糊</label>
+                        <input type="range" id="blurLevel" min="0" max="20" value="5">
+                        <span id="blurValue">5</span>
+                    </div>
+                    <div class="customize-item">
+                        <label>字体大小</label>
+                        <input type="range" id="fontSize" min="14" max="32" value="20">
+                        <span id="fontSizeValue">20</span>
+                    </div>
+                </div>
+            </div>
+            
             <button class="btn-primary" onclick="goToStep(2)">下一步</button>
         </section>
 
@@ -37,25 +94,38 @@
         <section class="step hidden" id="step2">
             <h2>第二步：上传图片和内容</h2>
             
-            <div class="upload-area" id="uploadArea">
-                <p>点击或拖拽图片到这里</p>
-                <input type="file" id="fileInput" accept="image/*" multiple style="display:none">
-            </div>
+            <div class="two-column">
+                <div class="left-column">
+                    <div class="upload-area" id="uploadArea">
+                        <p>点击或拖拽图片到这里</p>
+                        <p style="font-size:0.9rem;color:#999;margin-top:5px;">支持 JPG、PNG，建议上传 1-5 张</p>
+                        <input type="file" id="fileInput" accept="image/*" multiple style="display:none">
+                    </div>
 
-            <div class="preview-container">
-                <div class="video-preview" id="videoPreview">
-                    <p>视频预览区域</p>
+                    <div class="form-group">
+                        <label>店铺名称</label>
+                        <input type="text" id="shopName" placeholder="例如：老王茶铺" oninput="updateLivePreview()">
+                    </div>
+
+                    <div class="form-group">
+                        <label>品牌口号</label>
+                        <input type="text" id="slogan" placeholder="例如：好茶，好心情" oninput="updateLivePreview()">
+                    </div>
                 </div>
-            </div>
-
-            <div class="form-group">
-                <label>店铺名称：</label>
-                <input type="text" id="shopName" placeholder="例如：老王茶铺" oninput="updatePreview()">
-            </div>
-
-            <div class="form-group">
-                <label>品牌口号：</label>
-                <input type="text" id="slogan" placeholder="例如：好茶，好心情" oninput="updatePreview()">
+                
+                <div class="right-column">
+                    <div class="live-preview-label">📺 实时预览</div>
+                    <div class="live-preview" id="livePreview">
+                        <div class="live-bg"></div>
+                        <div class="live-content">
+                            <div class="live-images" id="liveImages"></div>
+                            <div class="live-text-container">
+                                <div class="live-title" id="liveTitle">店铺名称</div>
+                                <div class="live-slogan" id="liveSlogan">品牌口号</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="btn-group">
@@ -69,7 +139,21 @@
             <h2>第三步：生成并下载视频</h2>
             
             <div class="video-result" id="videoResult">
-                <p>点击下方按钮生成视频</p>
+                <div class="result-preview">
+                    <div class="live-bg"></div>
+                    <div class="live-content">
+                        <div class="live-images" id="finalImages"></div>
+                        <div class="live-text-container">
+                            <div class="live-title" id="finalTitle">店铺名称</div>
+                            <div class="live-slogan" id="finalSlogan">品牌口号</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="summary-info" id="summaryInfo">
+                <p>模板：<span id="summaryTemplate">经典展示</span></p>
+                <p>图片：<span id="summaryImages">0</span> 张</p>
             </div>
 
             <div class="btn-group">
